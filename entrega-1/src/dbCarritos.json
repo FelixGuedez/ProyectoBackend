@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "productos": [
+      {
+        "id": 2,
+        "timestamp": "08/09/2022 08:40:50",
+        "nombre": "Mouse",
+        "descripcion": "lorem2222",
+        "codigo": "2222",
+        "foto": "URL",
+        "precio": "SSS",
+        "stock": "3"
+      }
+    ]
+  }
+]
