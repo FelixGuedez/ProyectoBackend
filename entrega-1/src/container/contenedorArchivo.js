@@ -1,9 +1,44 @@
 import { promises as fs } from 'fs';
 
-export default class Container {
+export default class ContainerArchivo {
     constructor(ruta) {
         this.ruta = ruta
     }
+
+    async getAll() {
+        try {
+            const objs = await fs.readFile(this.ruta, 'utf-8')
+            return JSON.parse(objs)
+        } catch (error) {
+            return error
+        }
+    }
+
+    async getById(id) {
+        try {
+            const objs = await this.getAll()
+            const objFind = objs.find((e) => e.id == id)
+            return objFind
+        } catch (error) {
+            console.log('No se encontro el articulo seleccionado')
+        }
+    }
+
+    async deleteById(id) {
+        try {
+            const objs = await this.getAll()
+            const indexObj = objs.findIndex((e) => e.id == id)
+            if (indexObj == -1) {
+                return 'Articulo no encontrado'
+            } else {
+                objs.splice(indexObj, 1)
+                await fs.writeFile(this.ruta, JSON.stringify(objs, null, 2))
+            }
+        } catch (error) {
+            return 'No se pudo eliminar'
+        }
+    }
+
     async save(obj) {
         try {
             const objs = await this.getAll()
@@ -22,37 +57,7 @@ export default class Container {
             console.log(error)
         }
     }
-    async getById(id) {
-        try {
-            const objs = await this.getAll()
-            const objFind = objs.find((e) => e.id == id)
-            return objFind
-        } catch (error) {
-            console.log('No se encontro el articulo seleccionado')
-        }
-    }
-    async getAll() {
-        try {
-            const objs = await fs.readFile(this.ruta, 'utf-8')
-            return JSON.parse(objs)
-        } catch (error) {
-            return error
-        }
-    }
-    async deleteById(id) {
-        try {
-            const objs = await this.getAll()
-            const indexObj = objs.findIndex((e) => e.id == id)
-            if (indexObj == -1) {
-                return 'Articulo no encontrado'
-            } else {
-                objs.splice(indexObj, 1)
-                await fs.writeFile(this.ruta, JSON.stringify(objs, null, 2))
-            }
-        } catch (error) {
-            return 'No se pudo eliminar'
-        }
-    }
+
     async deleteAll() {
         try {
             const objs = []
@@ -78,9 +83,6 @@ export default class Container {
         return {id, ...newObj}
     }
     
-
-
-
 
     async add(id, body) {
         const objs = await this.getAll()

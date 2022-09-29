@@ -38,5 +38,12 @@
     "foto": "URL",
     "precio": "SSS",
     "stock": "3"
+  },
+  {
+    "id": 5,
+    "timestamp": 1664419441331,
+    "nombre": "Mouse",
+    "precio": 1200,
+    "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_706788-MLA45377337052_032021-F.webp"
   }
 ]

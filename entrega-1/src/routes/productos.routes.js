@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import Container  from '../container/contenedor.js'
 import { config } from '../utils/config.js';
+import { productosDao as DB_PRODUCTOS } from '../daos/index.js';
+
 
 const routerProductos = Router();
-const DB_PRODUCTOS = new Container('./src/dbProductos.json')
 const esAdmin = config.isAdmin
 
 function soloAdmins(req, res, next){
@@ -26,6 +26,7 @@ routerProductos.get('/:id', soloAdmins, async (req, res)=>{
 });
 
 routerProductos.post('/', soloAdmins, async (req, res)=>{
+    console.log(req.body)
     res.json(await DB_PRODUCTOS.save(req.body))
 
 });
@@ -35,7 +36,7 @@ routerProductos.delete('/:id', async (req, res)=>{
 });
 
 routerProductos.put('/:id', soloAdmins, async (req, res)=>{
-    res.json( await DB_PRODUCTOS.update(req.params.id, req.body))
+    res.json( await DB_PRODUCTOS.updateDb(req.params.id, req.body))
     
 });
 
