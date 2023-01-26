@@ -3,6 +3,7 @@ import passport  from "passport";
 import { getHome, getLogin, getRegistro, postRegistro, getLoginError, getLogout} from '../controllers/operacion.usuarios.controllers.js';
 import { getProductos, productoById, updateProducto, deleteProducto, postProductos } from "../controllers/operacion.productos.controller.js";
 import { getCarritos, getByIdCarritos, createCarrito, addProductCarritos } from "../controllers/operacion.carritos.controllers.js";
+import { getMensajes } from "../controllers/operacion.mensajes.controller.js";
 
 import { soloAdmins } from "../services/operaciones.services.js";
 
@@ -24,6 +25,7 @@ routerApp.post('/login', passport.authenticate('local', { successRedirect: '/pro
 routerApp.get('/carritos', getCarritos)
 routerApp.post('/carritos', createCarrito)
 routerApp.post('/carritos/:id/productos', addProductCarritos)
+routerApp.get('/chat', getMensajes)
 
 
 export default routerApp

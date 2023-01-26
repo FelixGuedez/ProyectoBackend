@@ -1,80 +1,36 @@
 <div class="jumbotron p-0 m-2 d-flex justify-content-between">
     <h2 style="color: green;">Bienvenido</h2>
-        <button class="btn btn-warning mt-1 mb-1" onclick="location.href='/logout'" type="submit">Logout</button>
+    <button class="btn btn-warning mt-1 mb-1" onclick="location.href='/logout'" type="submit">Logout</button>
 </div>
 
+<div class="table-responsive">
+    <table class="table table-dark" id="tabla-productos">
 
-<div>
-    <h2 style="color:orange;">Lista de Productos</h2>
-    {{productos}}
-        <h2 style="color:orange;">Nombres</h2>
-    {{productsJson}}.name
-    <div class="table-responsive">
-        <table class="table table-dark" id="historial">
-
-        </table>
-    </div>
-
+    </table>
 </div>
+
 <script>
 
-
-        const productsReceived = 'Hola'
-
-        console.log(productsReceived)
-
-        const htmlProducts = productsReceived.map(item => {
-            return `<tr>
-    <td>${item.name}</td>
-    <td>${item.price}</td>
-    <td>
-        <img width="30" src="${item.image}" alt="">
-    </td>
-</tr>`
-        })
-
-        const headerTabla = ` <tr style="color: green;">
-    <th>Producto</th>
-    <th>Precio</th>
-    <th>Imagen</th>
-</tr>`
-
-        document.querySelector("#historial").innerHTML = headerTabla + htmlProducts
+    /*=============== Renderizado de productos ===============*/
+    const objetos =  {{products}}
 
 
 
+    async function renderProducts(objetos) {
+        const table = `<tr style="color: yellow;"> <th>Producto</th> <th>Precio</th> <th>Imagen</th> </tr>`;
+        const cuerpoProductos = await objetos.map(item => {
+            return `
+                <tr>
+                    <td>${item.producto}</td>
+                    <td>${item.precio}</td>
+                    <td>
+                        <img width="30px" src=${item.img} alt="Prod. img">
+                    </td>
+                </tr>`
+        }).join('')
+        document.querySelector('#tabla-productos').innerHTML = table + cuerpoProductos;
+    }
 
+</script>
 
-
-
-    </script>
-
-
-{{!-- <h3>Chat de Mensajes</h3>
-<h4>Compresion <span id="porcentajeCompresion"></span></h4>
-<form>
-    <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" aria-describedby="userComment">
-        <!-- <small id="userComment" class="form-text text-muted">Email que se utilizara al enviar mensajes.</small> -->
-        <label for="nombre">Nombre:</label>
-        <input type="text" class="form-control" id="nombre" aria-describedby="userComment">
-        <label for="apellido">Apellido:</label>
-        <input type="text" class="form-control" id="apellido" aria-describedby="userComment">
-        <label for="edad">Edad:</label>
-        <input type="number" class="form-control" id="edad" aria-describedby="userComment">
-        <label for="alias">Alias:</label>
-        <input type="text" class="form-control" id="alias" aria-describedby="userComment">
-        <label for="avatar">Avatar:</label>
-        <input type="text" class="form-control" id="avatar" aria-describedby="userComment">
-    </div>
-    <div class="form-group">
-        <label for="contenidoMensaje">Mensaje:</label>
-        <input class="form-control" id="contenidoMensaje" rows="3"></input>
-    </div>
-    <button class="btn btn-success" onclick="enviarMensaje()">Enviar Mensaje</button>
-</form>
-<hr>
-<div id="mensajes">
-    <!-- aqui se renderizan los mensajes recibidos por parte del server -->
-</div> --}}
+</div>

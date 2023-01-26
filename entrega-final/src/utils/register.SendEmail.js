@@ -1,5 +1,6 @@
 import { createTransport } from "nodemailer";
 import dotenv from 'dotenv';
+import { logger } from "./logger.config.js";
 
 dotenv.config({path:'../../.env'});
 
@@ -30,6 +31,6 @@ console.log( process.env.COUNT, process.env.PASSWORD)
     try {
         const info = await transporter.sendMail(regConfirm_MailOptions)
     } catch (error) {
-        console.log(error)
+        logger.warn(error)
     }
 }

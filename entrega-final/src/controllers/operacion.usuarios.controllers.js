@@ -1,13 +1,30 @@
 import { logger } from "../utils/logger.config.js"
-import {generateHashPassword, verifyPass, nameUsername} from '../services/operaciones.services.js';
+import { generateHashPassword, verifyPass, nameUsername } from '../services/operaciones.services.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local'
 import UsuariosDaoMongoDb from "../daos/usuarios/usuariosDaosMongoDb.js";
 import { registerEmailConfirmation } from '../utils/register.SendEmail.js';
 
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '../.env' });
+
+const SECRET_KEY = "1234567890!@#$%^&*()"
+
+
+
+
 const USUARIOS = new UsuariosDaoMongoDb
 const LocalStrategy = Strategy
 let nameUser
+
+function generateToken(user) {
+    const PRIVATE_KEY = process.env.SECRET_KEY
+    console.log('secretKey', PRIVATE_KEY)
+    const token = jwt.sign({ data: user }, SECRET_KEY, { expiresIn: '5m' })
+    return token;
+}
 
 passport.use(new LocalStrategy(
     async function (username, password, done) {
@@ -17,16 +34,27 @@ passport.use(new LocalStrategy(
         if (!existeUsuario) {
             return done(null, false);
         } else {
-            const match = await verifyPass(existeUsuario, password);
-            if (!match) {
-                return done(null, false);
+            if (username == 'admin@api.com') {
+                const accessToken = generateToken({ username });
+                logger.info('Usuario Logueado')
+                console.log(accessToken)
+                accessToken
+                const match = await verifyPass(existeUsuario, password);
+                if (!match) {
+                    return done(null, false);
+                }
+
+            } else {
+                const match = await verifyPass(existeUsuario, password);
+                if (!match) {
+                    return done(null, false);
+                }
             }
             nameUser = await nameUsername(existeUsuario)
             console.log('name user', nameUser)
             return done(null, existeUsuario);
         }
-    }
-));
+    }))
 
 export async function getHome(req, res) {
     try {
@@ -98,4 +126,3 @@ export async function postRegistro(req, res) {
         logger.warn('Ruta no implementada', error)
     }
 }
-

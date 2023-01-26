@@ -5,7 +5,6 @@ const esAdmin = config.isAdmin
 
 export async function verifyPass(username, password) {
     const match = await bcrypt.compare(password, username.password);
-    // console.log(`pass login: ${password} || pass hash: ${username.password}`)
     return match;
 }
 
@@ -19,10 +18,39 @@ export async function generateHashPassword(password) {
     return hashPassword;
 }
 
+
 export function soloAdmins(req, res, next){
-    if (!esAdmin) {
-        res.status(403).json({code: 403, msg: `Ruta ${req.baseurl}${req.url} y Metodo ${req.method} No Autorizados`})
-    } else {
-        next()
+    const authHeader = req.headers["Authorization"] || req.headers["authorization"];
+    console.log(authHeader)
+
+    if (!authHeader) {
+        return res.status(401).json(
+            {
+                code: 401,
+                msg: 'not authenticated token'
+            }
+        )
     }
+
+    const token = authHeader.split(' ')[0];
+
+    jwt.verify(token, PRIVATE_KEY, (err, datos ) =>{
+        if(err) return res.status(403).json({
+            code: 403,
+            msg: 'not authorized'
+        })
+
+        req.user = datos;
+        next();
+    })
 }
+
+
+
+// export function soloAdmins(req, res, next){
+//     if (!esAdmin) {
+//         res.status(403).json({code: 403, msg: `Ruta ${req.baseurl}${req.url} y Metodo ${req.method} No Autorizados`})
+//     } else {
+//         next()
+//     }
+// }

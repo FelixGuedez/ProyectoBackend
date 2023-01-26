@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import  { config }  from '../utils/config.js';
+import { logger } from '../utils/logger.config.js';
 
 const strConn = config.mongodb.cnxStr
 const options = config.mongodb.options
@@ -26,13 +27,13 @@ export default class ContainerMongoDb {
             await mongoose.connect(strConn, options);
             const docs = await this.model.find({ _id: id })
             if (docs.length == 0) {
-                console.log('No se encontro el articulo seleccionado')
+                logger.info('No se encontro el articulo seleccionado')
             }
             else {
                 return docs
             }
         } catch (error) {
-            console.log('No se encontro el articulo seleccionado,', error)
+            logger.info('No se encontro el articulo seleccionado,', error)
         } finally {
             await mongoose.disconnect()
         }
@@ -50,7 +51,7 @@ export default class ContainerMongoDb {
                 return objFind
             }
         } catch (error) {
-            console.log('No se encontro el usuario seleccionado por error', error)
+            logger.info('No se encontro el usuario seleccionado por error', error)
         } finally {
             //  await mongoose.disconnect()
         }
@@ -74,10 +75,9 @@ export default class ContainerMongoDb {
         try {
             await mongoose.connect(strConn, options);
             let doc = await this.model.create(elem)
-            console.log('Guardado en base de datos',doc)
             return doc
         } catch (error) {
-            console.log(error)
+            logger.info(error)
         } finally {
             await mongoose.disconnect()
         }
@@ -88,7 +88,7 @@ export default class ContainerMongoDb {
             await mongoose.connect(strConn, options);
             await this.model.deleteMany({})
         } catch (error) {
-            console.log(error)
+            logger.info(error)
         } finally {
             await mongoose.disconnect()
         }
@@ -98,8 +98,8 @@ export default class ContainerMongoDb {
         try {
             await mongoose.connect(strConn, options);
             console.log('en el contenedor', id , elem)
-            const obj = await this.model.updateOne({ "_id": id }, {$set: {id: id, ...elem}})
-            // console.log('desde el contenedor',obj)
+            const obj = await this.model.updateOne({ '_id': {$eq:id} }, elem)
+            console.log('desde el contenedor',obj)
             if (obj === undefined) {
                 return 'Producto No encontrado';
             }

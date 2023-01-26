@@ -5,9 +5,9 @@ const DB_PRODUCTOS = new ProductosDaoMongoDb
 
 export async function getProductos(req, res) {
     try {
-        const productos = await DB_PRODUCTOS.getAll()
-        res.json(productos);
-        // res.render('productos.hbs', { nombre })
+        const products = await DB_PRODUCTOS.getAll()
+        res.json(products);
+        // res.render('productos.hbs', { products })
     } catch (error) {
         logger.warn('Ruta no implementada', error)
     }
