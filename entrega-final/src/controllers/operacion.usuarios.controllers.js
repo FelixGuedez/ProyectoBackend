@@ -8,12 +8,11 @@ import { registerEmailConfirmation } from '../utils/register.SendEmail.js';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../.env' });
+import { config } from '../utils/config.js';
 
-const SECRET_KEY = "1234567890!@#$%^&*()"
+let esAdmin
 
-
-
+dotenv.config();
 
 const USUARIOS = new UsuariosDaoMongoDb
 const LocalStrategy = Strategy
@@ -22,29 +21,34 @@ let nameUser
 function generateToken(user) {
     const PRIVATE_KEY = process.env.SECRET_KEY
     console.log('secretKey', PRIVATE_KEY)
-    const token = jwt.sign({ data: user }, SECRET_KEY, { expiresIn: '5m' })
+    const token = jwt.sign({ data: user }, PRIVATE_KEY, { expiresIn: '5m' })
     return token;
 }
 
 passport.use(new LocalStrategy(
     async function (username, password, done) {
-        console.log(`${username} ${password}`)
         //Logica para validar si un usuario existe
         const existeUsuario = await USUARIOS.getByUserName(username)
         if (!existeUsuario) {
             return done(null, false);
         } else {
             if (username == 'admin@api.com') {
-                const accessToken = generateToken({ username });
-                logger.info('Usuario Logueado')
-                console.log(accessToken)
-                accessToken
+                // const accessToken = generateToken({ username });
+                // logger.info('Usuario Logueado')
+                // console.log(accessToken)
+                // accessToken
+                esAdmin = true
+                process.env.IS_ADMIN = esAdmin
                 const match = await verifyPass(existeUsuario, password);
                 if (!match) {
                     return done(null, false);
                 }
 
             } else {
+                esAdmin = false
+                process.env.IS_ADMIN = esAdmin
+                console.log('esAdmin Variable normal', esAdmin)
+                console.log('esAdmin Variable entorno', process.env.IS_ADMIN)
                 const match = await verifyPass(existeUsuario, password);
                 if (!match) {
                     return done(null, false);
